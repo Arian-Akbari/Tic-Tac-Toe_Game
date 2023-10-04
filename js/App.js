@@ -22,16 +22,16 @@ function init() {
     const view = new View();
     const store = new Store('live-game-key', player);
 
-    store.addEventListener('statechange' , () =>{
-        view.render(store.game , store.status);
+    store.addEventListener('statechange', () => {
+        view.render(store.game, store.status);
     })
 
-    window.addEventListener('storage' , () => {
+    window.addEventListener('storage', () => {
         console.log('testing');
-        view.render(store.game , store.status);
+        view.render(store.game, store.status);
     })
 
-    view.render(store.game , store.status);
+    view.render(store.game, store.status);
     view.gameResetEvent(event => {
         store.reset();
     })

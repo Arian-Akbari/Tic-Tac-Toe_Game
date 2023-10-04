@@ -42,7 +42,7 @@ export default class View {
             ties);
         this.initializeMoves(moves);
 
-        if(isComplete){
+        if (isComplete) {
             this.openResult(winner ? `${game.status.winner.name} wins!` : 'Tie!')
         }
 
@@ -103,7 +103,7 @@ export default class View {
     }
 
     playerMoveEvent(handler) {
-        this.#delegate(this.$.grid , '[data-id="square"]' , 'click' , handler);
+        this.#delegate(this.$.grid, '[data-id="square"]', 'click', handler);
         // this.$$.square.forEach(square => {
         //     square.addEventListener("click", () => handler(square));
         // })
@@ -150,9 +150,10 @@ export default class View {
         if (!elList) throw new Error("could not find element");
         return (elList);
     }
-    #delegate(el , selector , eventKey , handler){
-        el.addEventListener(eventKey , (event) => {
-            if(event.target.matches(selector)){
+
+    #delegate(el, selector, eventKey, handler) {
+        el.addEventListener(eventKey, (event) => {
+            if (event.target.matches(selector)) {
                 handler(event.target);
             }
         })
