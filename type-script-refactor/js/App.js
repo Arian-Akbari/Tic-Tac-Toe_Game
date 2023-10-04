@@ -30,7 +30,6 @@ function init() {
         console.log('testing');
         view.render(store.game, store.status);
     })
-
     view.render(store.game, store.status);
     view.gameResetEvent(event => {
         store.reset();

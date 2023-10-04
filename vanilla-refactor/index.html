@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <title>Tic Tac Toe Game</title>
+</head>
+<body>
+<main>
+
+    <div class="grid" data-id="grid">
+        <!--turn indicator-->
+        <div class="turn" data-id="player-turn">
+            <i class="fas fa-times yellow" data-id="player-icon"></i>
+            <p class="yellow">Player 1, you`re up!</p>
+        </div>
+        <!--Dropdown Menu-->
+        <div class="menu" data-id="menu">
+            <button class="menu-btn" data-id="menu-btn">
+                Actions
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="items border hidden" data-id="menu-items">
+                <button data-id="reset-btn">Reset</button>
+                <button data-id="new-round-btn">New Round</button>
+            </div>
+        </div>
+        <!--Game Board-->
+        <div id="1" class="square shadow" data-id="square"></div>
+        <div id="2" class="square shadow" data-id="square"></div>
+        <div id="3" class="square shadow" data-id="square"></div>
+        <div id="4" class="square shadow" data-id="square"></div>
+        <div id="5" class="square shadow" data-id="square"></div>
+        <div id="6" class="square shadow" data-id="square"></div>
+        <div id="7" class="square shadow" data-id="square"></div>
+        <div id="8" class="square shadow" data-id="square"></div>
+        <div id="9" class="square shadow" data-id="square"></div>
+        <!--Score board-->
+        <div class="score shadow" style="background-color: var(--yellow)">
+            <p>Player 1</p>
+            <span data-id="p1-score">0 Wins</span>
+        </div>
+        <div class="score shadow" style="background-color: var(--light-gray)">
+            <p>Ties</p>
+            <span data-id="ties">0</span>
+        </div>
+        <div class="score shadow" style="background-color: var(--turqoise)">
+            <p>Player2</p>
+            <span data-id="p2-score">0 Wins</span>
+        </div>
+    </div>
+</main>
+
+
+<div class="model hidden" data-id="result">
+    <div class="model-contents">
+        <p data-id="result-text">Player 1 Wins!</p>
+        <button data-id="result-button">Play again</button>
+    </div>
+</div>
+<footer>
+    <p>
+        Check out my <a href="https://github.com/Ariancomputer/">GitHub</a>
+    </p>
+</footer>
+
+<script src="js/App.js" type="module"></script>
+</body>
+</html>
