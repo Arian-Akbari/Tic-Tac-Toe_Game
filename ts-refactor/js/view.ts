@@ -1,6 +1,9 @@
+import store from "./store";
+import {game, move, player} from "./types";
+
 export default class View {
-    $ = {};
-    $$ = {};
+    $: Record<string, Element> = {};
+    $$: Record<string, NodeListOf<Element>> = {};
 
     constructor() {
 
@@ -27,7 +30,7 @@ export default class View {
     }
 
 
-    render(game, stats) {
+    render(game: store['game'], stats: store['status']) {
         const {playerWithStat, ties} = stats;
         const {
             currentPLayer,
@@ -43,27 +46,27 @@ export default class View {
         this.initializeMoves(moves);
 
         if (isComplete) {
-            this.openResult(winner ? `${game.status.winner.name} wins!` : 'Tie!')
+            this.openResult(winner ? `${winner.name} wins!` : 'Tie!')
         }
 
         this.setTurnIndicator(currentPLayer);
 
     }
 
-    #updateScoreboard(p1Wins, p2Wins, ties) {
-        this.$.p1Wins.innerText = `${p1Wins} wins`;
-        this.$.p2Wins.innerText = `${p2Wins} wins`;
-        this.$.ties.innerText = `${ties}`;
+    #updateScoreboard(p1Wins: number, p2Wins: number, ties: number) {
+        this.$.p1Wins.textContent = `${p1Wins} wins`;
+        this.$.p2Wins.textContent = `${p2Wins} wins`;
+        this.$.ties.textContent = `${ties}`;
     }
 
-    gameResetEvent(handler) {
+    gameResetEvent(handler: EventListener) {
         this.$.resetBtn.addEventListener("click", handler);
         this.$.resultBtn.addEventListener("click", handler);
     }
 
-    openResult(message) {
+    openResult(message: string) {
         this.$.result.classList.remove('hidden');
-        this.$.resultText.innerText = message;
+        this.$.resultText.textContent = message;
     }
 
     #closeResult() {
@@ -78,7 +81,8 @@ export default class View {
     #closeMenu() {
         this.$.menuItems.classList.add("hidden");
         this.$.menuBtn.classList.remove("border");
-        const icon = this.$.menuBtn.querySelector('i');
+        // const icon = this.$.menuBtn.querySelector('i');
+        const icon = this.#qs('i', this.$.menuBtn);
         icon.classList.remove("fa-chevron-up");
         icon.classList.add("fa-chevron-down");
     }
@@ -89,7 +93,7 @@ export default class View {
         }))
     }
 
-    initializeMoves(moves) {
+    initializeMoves(moves: move[]) {
         this.$$.square.forEach(square => {
             const existingMoves = moves.find((move) => move.squareId === +square.id);
             if (existingMoves) {
@@ -98,25 +102,28 @@ export default class View {
         })
     }
 
-    newRoundEvent(handler) {
+    newRoundEvent(handler: EventListener) {
         this.$.newRoundBtn.addEventListener("click", handler);
     }
 
-    playerMoveEvent(handler) {
-        this.#delegate(this.$.grid, '[data-id="square"]', 'click', handler);
+    playerMoveEvent(handler: (el: Element) => void) {
+        this.#delegate(this.$.grid,
+            '[data-id="square"]',
+            'click',
+            handler);
         // this.$$.square.forEach(square => {
         //     square.addEventListener("click", () => handler(square));
         // })
     }
 
     //helper methods
-    handlePlayerMove(squareEl, player) {
+    handlePlayerMove(squareEl: Element, player: player) {
         const icon = document.createElement('i');
         icon.classList.add(player.colorClass, player.iconType, player.iconClass);
         squareEl.replaceChildren(icon);
     }
 
-    setTurnIndicator(player) {
+    setTurnIndicator(player: player) {
         const icon = document.createElement('i');
         const label = document.createElement('p');
 
@@ -133,26 +140,36 @@ export default class View {
     #toggleMenu() {
         this.$.menuItems.classList.toggle("hidden");
         this.$.menuBtn.classList.toggle("border");
-        const icon = this.$.menuBtn.querySelector('i');
+        // const icon = this.$.menuBtn.querySelector('i');
+        const icon = this.#qs('i', this.$.menuBtn);
         icon.classList.toggle("fa-chevron-up");
         icon.classList.toggle("fa-chevron-down");
     }
 
-    #qs(selector, parent) {
+    #qs(selector: string, parent?: Element) {
         const el = parent ? parent.querySelector(selector)
             : document.querySelector(selector);
         if (!el) throw new Error("could not find element");
         return (el);
     }
 
-    #qsAll(selector) {
+    #qsAll(selector: string) {
         const elList = document.querySelectorAll(selector);
         if (!elList) throw new Error("could not find element");
         return (elList);
     }
 
-    #delegate(el, selector, eventKey, handler) {
+    #delegate(el: Element,
+              selector: string,
+              eventKey: string,
+              handler: (el: Element) => void) {
+
         el.addEventListener(eventKey, (event) => {
+
+            if (!(event.target instanceof Element)) {
+                throw new Error('Event target not found');
+            }
+
             if (event.target.matches(selector)) {
                 handler(event.target);
             }

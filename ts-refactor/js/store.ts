@@ -1,3 +1,7 @@
+import type {gameState, player , game} from "./types";
+
+
+
 const initialValue = {
     currentGameMoves: [],
     history: {
@@ -6,13 +10,15 @@ const initialValue = {
     }
 };
 
+type SaveStateCb = (prevState : gameState) => gameState
+
 export default class store extends EventTarget {
     #state = initialValue;
 
-    constructor(key, players) {
+    constructor(
+        private readonly storageKey : string,
+        private readonly players : player[]) {
         super();
-        this.players = players;
-        this.storageKey = key;
     }
 
     get status() {
@@ -20,14 +26,16 @@ export default class store extends EventTarget {
         return {
             playerWithStat: this.players.map(player => {
                 const wins = state.history.currentRoundGames.filter
-                (game => game.status.winner?.id === player.id).length;
+                ((game: { status: { winner: { id: number; }; }; }) => {
+                    return game.status.winner?.id === player.id;
+                }).length;
 
                 return {
                     ...player,
                     wins
                 }
             }),
-            ties: state.history.currentRoundGames.filter((game) =>
+            ties: state.history.currentRoundGames.filter((game : game) =>
                 game.status.winner === null).length,
 
         };
@@ -51,8 +59,8 @@ export default class store extends EventTarget {
 
         for (let player of this.players) {
             const selectedSquareIds = state.currentGameMoves.filter
-            ((move) => move.player.id === player.id).map
-            (currentGameMoves => currentGameMoves.squareId);
+            ((move: { player: { id: number; }; }) => move.player.id === player.id).map
+            ((currentGameMoves: { squareId: number; }) => currentGameMoves.squareId);
 
             for (let pattern of winningPatterns) {
                 if (pattern.every(v => selectedSquareIds.includes(v))) {
@@ -72,7 +80,7 @@ export default class store extends EventTarget {
 
     }
 
-    playerMove(squareId) {
+    playerMove(squareId : Number) {
         const stateClone = structuredClone(this.#getState());
         stateClone.currentGameMoves.push({
             squareId,
@@ -103,13 +111,13 @@ export default class store extends EventTarget {
 
     newRound() {
         this.reset();
-        const stateClone = structuredClone(this.#getState());
+        const stateClone = structuredClone(this.#getState()) as gameState;
         stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
         stateClone.history.currentRoundGames = [];
         this.#saveState(stateClone);
     }
 
-    #saveState(stateOrFun) {
+    #saveState(stateOrFun : gameState | SaveStateCb ) {
         const prevState = this.#getState();
         let newState
         switch (typeof stateOrFun) {
